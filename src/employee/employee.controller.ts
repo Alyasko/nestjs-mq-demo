@@ -5,6 +5,8 @@ import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/updateEmployeeDto';
 import { EmployeeResponse } from './dto/EmployeeResponse';
 
+// TODO: add error handling, input validation, implement storage, add swagger/api documentation
+
 @Controller('employee')
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) { }
