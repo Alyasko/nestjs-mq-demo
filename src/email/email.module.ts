@@ -11,9 +11,6 @@ import { BullModule } from '@nestjs/bull';
             transport: {
                 host: 'smtp.freesmtpservers.com',
                 port: 25
-            },
-            defaults: {
-                from: '"nest-mq-demo" <demo@nest-mq-demo.com>',
             }
         }),
         BullModule.registerQueue({
