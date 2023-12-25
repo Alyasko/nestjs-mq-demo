@@ -4,14 +4,16 @@ import { EmployeeService } from './employee.service';
 import { EmailSchedulerService } from '../email-scheduler/email-scheduler.service';
 import { BullModule } from '@nestjs/bull';
 import { EmailProcessorService } from '../email-processor/email-processor.service';
+import { EmailService } from '../email/email.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmailSchedulerService, EmailProcessorService],
+  providers: [EmployeeService, EmailService],
   imports: [
+    EmailModule,
     BullModule.registerQueue({
-      name: 'email',
-      // processors: [join(__dirname, 'processor.js')],
+      name: 'email'
     })
   ],
 })

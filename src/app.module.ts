@@ -7,6 +7,7 @@ import { BullModule } from '@nestjs/bull';
 import { EmailService } from './email/email.service';
 import { EmailSchedulerService } from './email-scheduler/email-scheduler.service';
 import { EmailProcessorService } from './email-processor/email-processor.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [EmployeeModule,
@@ -20,10 +21,10 @@ import { EmailProcessorService } from './email-processor/email-processor.service
       },
     }),
     BullModule.registerQueue({
-      name: 'email',
-      // processors: [join(__dirname, 'processor.js')],
-    }),],
+      name: 'email'
+    })
+  ],
   controllers: [AppController],
-  providers: [AppService, EmailService, EmailSchedulerService],
+  providers: [AppService, EmailProcessorService],
 })
 export class AppModule { }

@@ -3,20 +3,21 @@ import { Employee } from './model/employee';
 import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { UpdateEmployeeDto } from "./dto/updateEmployeeDto";
 import { EmailSchedulerService } from '../email-scheduler/email-scheduler.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class EmployeeService {
 
     private employees: Employee[] = []; // This array will act as in-memory data store
 
-    constructor(private emailSchedulerService: EmailSchedulerService) { }
+    constructor(private emailService: EmailService) { }
 
     create(employeeDto: CreateEmployeeDto): Employee {
         const employee = new Employee(employeeDto.name, employeeDto.jobTitle, employeeDto.department);
 
         this.employees.push(employee);
 
-        this.emailSchedulerService.scheduleEmail("a@test.com", "Subject", "Body");
+        this.emailService.sendWelcomeEmail(employee);
 
         return employee;
     }
