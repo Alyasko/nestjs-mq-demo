@@ -4,6 +4,7 @@ import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/updateEmployeeDto';
 import { EmployeeResponse } from './dto/EmployeeResponse';
+import { ApiResponse } from '../common/apiResponse';
 
 // TODO: add error handling, input validation, implement storage, add swagger/api documentation
 
@@ -11,35 +12,47 @@ import { EmployeeResponse } from './dto/EmployeeResponse';
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) { }
 
-    @Post()
-    create(@Body() createEmployeeDto: CreateEmployeeDto) {
-        return this.employeeService.create(createEmployeeDto);
-    }
-
-    @Put(':id')
-    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
-        return this.employeeService.update(id, updateEmployeeDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.employeeService.delete(id);
-    }
-
-    @Get(":id")
-    get(@Param("id") id: string): EmployeeResponse {
-        const employee = this.employeeService.get(id);
-        if (employee === null) {
-            throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
-        }
-
+    private transformToResponse(employee: Employee): EmployeeResponse {
         return <EmployeeResponse>{ id: employee.id, name: employee.name, jobTitle: employee.jobTitle, department: employee.department };
     }
 
-    @Get()
-    getAll(): EmployeeResponse[] {
-        // TODO: transform to Generic response.
-        return this.employeeService.getAll().map(emp => <EmployeeResponse>{ id: emp.id, name: emp.name, jobTitle: emp.jobTitle, department: emp.department });
+    @Post()
+    create(@Body() createEmployeeDto: CreateEmployeeDto): ApiResponse<EmployeeResponse> {
+        const employee = this.employeeService.create(createEmployeeDto);
+
+        return <ApiResponse<EmployeeResponse>>{ isOk: true, data: this.transformToResponse(employee) };
     }
 
+    @Put(':id')
+    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): ApiResponse<EmployeeResponse> {
+        const employee = this.employeeService.update(id, updateEmployeeDto);
+        if (employee === null)
+            throw new HttpException("Unable to update employee.", HttpStatus.NOT_FOUND);
+
+        return <ApiResponse<EmployeeResponse>>{ isOk: true, data: this.transformToResponse(employee) };
+    }
+
+    @Delete(':id')
+    delete(@Param('id') id: string): ApiResponse {
+        const isDeleted = this.employeeService.delete(id);
+        if (!isDeleted)
+            throw new HttpException("Unable to delete employee.", HttpStatus.NOT_FOUND);
+
+        return <ApiResponse>{ isOk: true };
+    }
+
+    @Get(":id")
+    get(@Param("id") id: string): ApiResponse<EmployeeResponse> {
+        const employee = this.employeeService.get(id);
+        if (employee === null)
+            throw new HttpException("Unable to get employee.", HttpStatus.NOT_FOUND);
+
+        return <ApiResponse<EmployeeResponse>>{ isOk: true, data: this.transformToResponse(employee) };
+    }
+
+    @Get()
+    getAll(): ApiResponse<EmployeeResponse[]> {
+        const employeeResponses = this.employeeService.getAll().map(emp => this.transformToResponse(<EmployeeResponse>{ id: emp.id, name: emp.name, jobTitle: emp.jobTitle, department: emp.department }));
+        return <ApiResponse<EmployeeResponse[]>>{ isOk: true, data: employeeResponses };
+    }
 }

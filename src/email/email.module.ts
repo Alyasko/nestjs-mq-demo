@@ -4,17 +4,18 @@ import { EmailSchedulerService } from '../email-scheduler/email-scheduler.servic
 import { EmailProcessorService } from '../email-processor/email-processor.service';
 import { EmailService } from './email.service';
 import { BullModule } from '@nestjs/bull';
+import { apiConfig } from '../common/globalConfigService';
 
 @Module({
     imports: [
         MailerModule.forRoot({
             transport: {
-                host: 'smtp.freesmtpservers.com',
-                port: 25
+                host: apiConfig.smtpHost,
+                port: apiConfig.smtpPort,
             }
         }),
         BullModule.registerQueue({
-            name: 'email'
+            name: apiConfig.emailQueueName,
         })
     ],
     providers: [

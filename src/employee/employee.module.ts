@@ -6,6 +6,7 @@ import { BullModule } from '@nestjs/bull';
 import { EmailProcessorService } from '../email-processor/email-processor.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
+import { apiConfig } from '../common/globalConfigService';
 
 @Module({
   controllers: [EmployeeController],
@@ -13,7 +14,7 @@ import { EmailModule } from '../email/email.module';
   imports: [
     EmailModule,
     BullModule.registerQueue({
-      name: 'email'
+      name: apiConfig.emailQueueName,
     })
   ],
 })
