@@ -26,7 +26,7 @@ export class EmployeeController {
     @Get()
     findAll(): EmployeeResponse[] {
         // TODO: transform to Generic response.
-        return this.employeeService.getAll().map(emp => <EmployeeResponse>{ id: emp.id, name: emp.name, jobTitle: emp.jobTitle });
+        return this.employeeService.getAll().map(emp => <EmployeeResponse>{ id: emp.id, name: emp.name, jobTitle: emp.jobTitle, department: emp.department });
     }
 
 }
