@@ -10,6 +10,11 @@ export class EmployeeService {
 
     constructor(private emailService: EmailService, private storageService: StorageService<Employee>) { }
 
+    /**
+     * Creates a new employee. Sends a welcome email to the newly created employee.
+     * @param employeeDto - The data for creating the employee.
+     * @returns The created employee.
+     */
     create(employeeDto: CreateEmployeeDto): Employee {
         const employee = new Employee(employeeDto.name, employeeDto.jobTitle, employeeDto.department);
 
@@ -19,6 +24,12 @@ export class EmployeeService {
         return employee;
     }
 
+    /**
+     * Updates an existing employee.
+     * @param id - The ID of the employee to update.
+     * @param updateEmployeeDto - The data for updating the employee.
+     * @returns The updated employee.
+     */
     update(id: string, updateEmployeeDto: UpdateEmployeeDto): Employee {
         const employee = this.storageService.get(id);
         if (employee === null) {
@@ -34,6 +45,11 @@ export class EmployeeService {
         return employee;
     }
 
+    /**
+     * Deletes an employee.
+     * @param id - The ID of the employee to delete.
+     * @returns True if the employee was successfully deleted, false otherwise.
+     */
     delete(id: string): boolean {
 
         const employee = this.storageService.get(id);
@@ -47,11 +63,20 @@ export class EmployeeService {
         return isDeleted;
     }
 
+    /**
+     * Retrieves an employee by ID.
+     * @param id - The ID of the employee to retrieve.
+     * @returns The retrieved employee, or null if not found.
+     */
     get(id: string): Employee | null {
         const employee = this.storageService.get(id);
         return employee;
     }
 
+    /**
+     * Retrieves all employees.
+     * @returns An array of all employees.
+     */
     getAll(): Employee[] {
         return this.storageService.getAll();
     }

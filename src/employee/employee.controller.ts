@@ -4,10 +4,9 @@ import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/updateEmployeeDto';
 import { EmployeeResponse } from './dto/EmployeeResponse';
-import { ApiResponse } from '../common/apiResponse';
 import { IdParamPipe } from '../common/idParamPipe';
-
-// TODO: add error handling, input validation, implement storage, add swagger/api documentation
+import { ApiOperation, ApiResponse as SwaggerApiResponse } from '@nestjs/swagger';
+import { ApiResponse } from '../common/apiResponse';
 
 @Controller('employee')
 export class EmployeeController {
@@ -17,6 +16,8 @@ export class EmployeeController {
         return <EmployeeResponse>{ id: employee.id, name: employee.name, jobTitle: employee.jobTitle, department: employee.department };
     }
 
+    @ApiOperation({ summary: "Create a new employee" })
+    @SwaggerApiResponse({ status: 201, description: "The employee has been successfully created." })
     @Post()
     create(@Body() createEmployeeDto: CreateEmployeeDto): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.create(createEmployeeDto);
@@ -25,6 +26,8 @@ export class EmployeeController {
     }
 
     @Put(':id')
+    @ApiOperation({ summary: 'Update an existing employee' })
+    @SwaggerApiResponse({ status: 200, description: 'The employee has been successfully updated.' })
     update(@Param('id', IdParamPipe) id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.update(id, updateEmployeeDto);
         if (employee === null)
@@ -34,6 +37,8 @@ export class EmployeeController {
     }
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete an employee' })
+    @SwaggerApiResponse({ status: 200, description: 'The employee has been successfully deleted.' })
     delete(@Param('id', IdParamPipe) id: string): ApiResponse {
         const isDeleted = this.employeeService.delete(id);
         if (!isDeleted)
@@ -43,6 +48,8 @@ export class EmployeeController {
     }
 
     @Get(":id")
+    @ApiOperation({ summary: 'Get a specific employee' })
+    @SwaggerApiResponse({ status: 200, description: 'The employee has been successfully retrieved.' })
     get(@Param("id", IdParamPipe) id: string): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.get(id);
         if (employee === null)
@@ -52,6 +59,8 @@ export class EmployeeController {
     }
 
     @Get()
+    @ApiOperation({ summary: 'Get all employees' })
+    @SwaggerApiResponse({ status: 200, description: 'The list of employees has been successfully retrieved.' })
     getAll(): ApiResponse<EmployeeResponse[]> {
         const employeeResponses = this.employeeService.getAll().map(emp => this.transformToResponse(<EmployeeResponse>{ id: emp.id, name: emp.name, jobTitle: emp.jobTitle, department: emp.department }));
         return <ApiResponse<EmployeeResponse[]>>{ isOk: true, data: employeeResponses };

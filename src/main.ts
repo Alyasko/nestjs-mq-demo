@@ -6,7 +6,6 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/httpExceptionFilter';
 
 import "./common/globalConfigService";
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
