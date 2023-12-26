@@ -7,10 +7,11 @@ import { EmailProcessorService } from '../email-processor/email-processor.servic
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
 import { apiConfig } from '../common/globalConfigService';
+import { IdParamPipe } from '../common/idParamPipe';
 
 @Module({
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmailService],
+  providers: [EmployeeService, EmailService, IdParamPipe],
   imports: [
     EmailModule,
     BullModule.registerQueue({

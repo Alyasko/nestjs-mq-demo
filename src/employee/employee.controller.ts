@@ -5,6 +5,7 @@ import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/updateEmployeeDto';
 import { EmployeeResponse } from './dto/EmployeeResponse';
 import { ApiResponse } from '../common/apiResponse';
+import { IdParamPipe } from '../common/idParamPipe';
 
 // TODO: add error handling, input validation, implement storage, add swagger/api documentation
 
@@ -24,7 +25,7 @@ export class EmployeeController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): ApiResponse<EmployeeResponse> {
+    update(@Param('id', IdParamPipe) id: string, @Body() updateEmployeeDto: UpdateEmployeeDto): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.update(id, updateEmployeeDto);
         if (employee === null)
             throw new HttpException("Unable to update employee.", HttpStatus.NOT_FOUND);
@@ -33,7 +34,7 @@ export class EmployeeController {
     }
 
     @Delete(':id')
-    delete(@Param('id') id: string): ApiResponse {
+    delete(@Param('id', IdParamPipe) id: string): ApiResponse {
         const isDeleted = this.employeeService.delete(id);
         if (!isDeleted)
             throw new HttpException("Unable to delete employee.", HttpStatus.NOT_FOUND);
@@ -42,7 +43,7 @@ export class EmployeeController {
     }
 
     @Get(":id")
-    get(@Param("id") id: string): ApiResponse<EmployeeResponse> {
+    get(@Param("id", IdParamPipe) id: string): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.get(id);
         if (employee === null)
             throw new HttpException("Unable to get employee.", HttpStatus.NOT_FOUND);
