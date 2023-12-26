@@ -51,7 +51,6 @@ export class EmployeeService {
      * @returns True if the employee was successfully deleted, false otherwise.
      */
     delete(id: string): boolean {
-
         const employee = this.storageService.get(id);
         if (employee === null) {
             return false;
