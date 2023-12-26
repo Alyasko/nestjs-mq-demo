@@ -3,60 +3,56 @@ import { Employee } from './model/employee';
 import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { UpdateEmployeeDto } from "./dto/updateEmployeeDto";
 import { EmailService } from '../email/email.service';
+import { StorageService } from '../storage/storage.service';
 
-// TODO: separate data storage.
 @Injectable()
 export class EmployeeService {
 
-    private employees: Employee[] = []; // This array will act as in-memory data store
-
-    constructor(private emailService: EmailService) { }
+    constructor(private emailService: EmailService, private storageService: StorageService<Employee>) { }
 
     create(employeeDto: CreateEmployeeDto): Employee {
         const employee = new Employee(employeeDto.name, employeeDto.jobTitle, employeeDto.department);
 
-        this.employees.push(employee);
-
+        this.storageService.add(employee);
         this.emailService.sendWelcomeEmail(employee);
 
         return employee;
     }
 
     update(id: string, updateEmployeeDto: UpdateEmployeeDto): Employee {
-        const employeeIndex = this.employees.findIndex(emp => emp.id === id);
-        if (employeeIndex === -1) {
-            return null; // TODO: return error.
+        const employee = this.storageService.get(id);
+        if (employee === null) {
+            return null;
         }
-
-        const employee = this.employees[employeeIndex];
 
         employee.name = updateEmployeeDto.name;
         employee.jobTitle = updateEmployeeDto.jobTitle;
         employee.department = updateEmployeeDto.department;
 
+        this.storageService.replace(id, employee);
+
         return employee;
     }
 
     delete(id: string): boolean {
-        const employeeIndex = this.employees.findIndex(emp => emp.id === id);
-        if (employeeIndex === -1) {
+
+        const employee = this.storageService.get(id);
+        if (employee === null) {
             return false;
         }
 
-        const employeeToDelete = this.employees[employeeIndex];
-        this.emailService.sendFiringEmail(employeeToDelete);
+        this.emailService.sendFiringEmail(employee);
 
-        this.employees.splice(employeeIndex, 1);
-
-        return true;
+        const isDeleted = this.storageService.delete(id);
+        return isDeleted;
     }
 
     get(id: string): Employee | null {
-        const e = this.employees.find(emp => emp.id === id);
-        return e || null;
+        const employee = this.storageService.get(id);
+        return employee;
     }
 
     getAll(): Employee[] {
-        return this.employees;
+        return this.storageService.getAll();
     }
 }

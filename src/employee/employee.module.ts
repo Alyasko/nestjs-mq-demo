@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 import { EmployeeController } from './employee.controller';
 import { EmployeeService } from './employee.service';
-import { EmailSchedulerService } from '../email-scheduler/email-scheduler.service';
 import { BullModule } from '@nestjs/bull';
-import { EmailProcessorService } from '../email-processor/email-processor.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
 import { apiConfig } from '../common/globalConfigService';
 import { IdParamPipe } from '../common/idParamPipe';
+import { StorageService } from '../storage/storage.service';
 
 @Module({
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmailService, IdParamPipe],
+  providers: [EmployeeService, EmailService, IdParamPipe, StorageService],
   imports: [
     EmailModule,
     BullModule.registerQueue({
