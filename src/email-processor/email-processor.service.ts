@@ -1,29 +1,29 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { WelcomeEmailQueueDto } from '../email/dto/welcomeEmailQueueDto';
+import { EmailQueueItemDto } from '../email/dto/welcomeEmailQueueItemDto';
 
 // https://www.wpoven.com/tools/free-smtp-server-for-testing#
 
+// TODO: separate email sending logic from queue processing.
 @Processor('email')
 export class EmailProcessorService {
 
     constructor(private readonly mailerService: MailerService) { }
 
     @Process()
-    async sendEmail(job: Job<WelcomeEmailQueueDto>) {
-        const targetEmployee = job.data.employee;
+    async sendEmail(job: Job<EmailQueueItemDto>) {
+        const queueItem = job.data;
 
         try {
             await this.mailerService.sendMail({
-                to: 'employee@employee.com',
-                from: 'noreply@alex.com',
-                subject: `Welcome to our ${targetEmployee.department} department!`,
-                text: `Welcome ${targetEmployee.name}`,
-                html: `<b>Welcome ${targetEmployee.name}</b><br/>We're happy to invite you to our ${targetEmployee.department} department for ${targetEmployee.jobTitle} position!`,
+                to: queueItem.to,
+                from: 'noreply@prb.com',
+                subject: queueItem.subject,
+                html: queueItem.htmlBody,
             });
 
-            console.log(`Email sent to ${targetEmployee.id}`);
+            console.log(`Email ${queueItem.id} has been sent.`);
         }
         catch (e) {
             console.error(e);

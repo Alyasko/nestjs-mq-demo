@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Employee } from './model/employee';
 import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { UpdateEmployeeDto } from "./dto/updateEmployeeDto";
-import { EmailSchedulerService } from '../email-scheduler/email-scheduler.service';
 import { EmailService } from '../email/email.service';
 
+// TODO: separate data storage.
 @Injectable()
 export class EmployeeService {
 
@@ -42,6 +42,9 @@ export class EmployeeService {
         if (employeeIndex === -1) {
             return false;
         }
+
+        const employeeToDelete = this.employees[employeeIndex];
+        this.emailService.sendFiringEmail(employeeToDelete);
 
         this.employees.splice(employeeIndex, 1);
 

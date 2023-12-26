@@ -1,5 +1,6 @@
 import { Employee } from "../../employee/model/employee";
 
-export interface WelcomeEmailQueueDto {
+
+export interface FiringEmailQueueItemDto {
     employee: Employee;
 }
