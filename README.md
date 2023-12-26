@@ -34,7 +34,7 @@ $ yarn run start:debug
 
 ```
 
-The API is hosted on http://localhost:3000 by default. Swagger UI can be accessed by navigation to http://localhost:3000/api URL.
+The API is hosted on http://localhost:3000 by default. Swagger UI can be accessed by navigating to http://localhost:3000/api URL.
 
 **Important**. The app stores the data in-memory, it means that the changes will be lost after restart.
 
