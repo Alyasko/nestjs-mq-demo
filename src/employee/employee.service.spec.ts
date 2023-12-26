@@ -36,7 +36,7 @@ describe('EmployeeService', () => {
     });
 
     describe('create', () => {
-        it('should create a new employee and send a welcome email', () => {
+        it('should create a new employee', () => {
             const employeeDto: CreateEmployeeDto = {
                 name: 'John Doe',
                 jobTitle: 'Software Engineer',
@@ -44,12 +44,10 @@ describe('EmployeeService', () => {
             };
 
             const storageServiceAddSpy = jest.spyOn(storageService, 'add');
-            const emailServiceSendWelcomeEmailSpy = jest.spyOn(emailService, 'sendWelcomeEmail');
 
             const result = service.create(employeeDto);
 
             expect(storageServiceAddSpy).toHaveBeenCalled();
-            expect(emailServiceSendWelcomeEmailSpy).toHaveBeenCalled();
             expect(result.name).toEqual(employeeDto.name);
         });
     });
@@ -88,29 +86,27 @@ describe('EmployeeService', () => {
     });
 
     describe('delete', () => {
-        it('should delete an existing employee and send a firing email', () => {
+        it('should delete an existing employee', () => {
             const employee = new Employee('John Doe', 'Software Engineer', 'Engineering');
 
             jest.spyOn(storageService, 'get').mockReturnValueOnce(employee);
             jest.spyOn(storageService, 'delete').mockReturnValueOnce(true);
             const storageServiceDeleteSpy = jest.spyOn(storageService, 'delete');
-            const emailServiceSendFiringEmailSpy = jest.spyOn(emailService, 'sendFiringEmail');
 
             const result = service.delete(employee.id);
 
-            expect(emailServiceSendFiringEmailSpy).toHaveBeenCalledWith(employee);
             expect(storageServiceDeleteSpy).toHaveBeenCalledWith(employee.id);
-            expect(result).toBe(true);
+            expect(result).not.toBe(null);
         });
 
-        it('should return false if the employee does not exist', () => {
+        it('should return null if the employee does not exist', () => {
             const id = '1';
 
             jest.spyOn(storageService, 'get').mockReturnValueOnce(null);
 
             const result = service.delete(id);
 
-            expect(result).toBe(false);
+            expect(result).toBe(null);
         });
     });
 

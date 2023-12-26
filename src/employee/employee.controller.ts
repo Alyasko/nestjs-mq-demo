@@ -7,10 +7,11 @@ import { EmployeeResponse } from './dto/EmployeeResponse';
 import { IdParamPipe } from '../common/idParamPipe';
 import { ApiOperation, ApiResponse as SwaggerApiResponse } from '@nestjs/swagger';
 import { ApiResponse } from '../common/apiResponse';
+import { EmailService } from '../email/email.service';
 
 @Controller('employee')
 export class EmployeeController {
-    constructor(private readonly employeeService: EmployeeService) { }
+    constructor(private readonly employeeService: EmployeeService, private emailService: EmailService) { }
 
     private transformToResponse(employee: Employee): EmployeeResponse {
         return <EmployeeResponse>{ id: employee.id, name: employee.name, jobTitle: employee.jobTitle, department: employee.department };
@@ -21,6 +22,7 @@ export class EmployeeController {
     @Post()
     create(@Body() createEmployeeDto: CreateEmployeeDto): ApiResponse<EmployeeResponse> {
         const employee = this.employeeService.create(createEmployeeDto);
+        this.emailService.sendWelcomeEmail(employee);
 
         return <ApiResponse<EmployeeResponse>>{ isOk: true, data: this.transformToResponse(employee) };
     }
@@ -40,9 +42,12 @@ export class EmployeeController {
     @ApiOperation({ summary: 'Delete an employee' })
     @SwaggerApiResponse({ status: 200, description: 'The employee has been successfully deleted.' })
     delete(@Param('id', IdParamPipe) id: string): ApiResponse {
-        const isDeleted = this.employeeService.delete(id);
-        if (!isDeleted)
+        const deletedEmployee = this.employeeService.delete(id);
+        if (deletedEmployee === null) {
             throw new HttpException("Unable to delete employee.", HttpStatus.NOT_FOUND);
+        }
+
+        this.emailService.sendFiringEmail(deletedEmployee);
 
         return <ApiResponse>{ isOk: true };
     }

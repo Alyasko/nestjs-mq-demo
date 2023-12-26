@@ -8,7 +8,7 @@ import { StorageService } from '../storage/storage.service';
 @Injectable()
 export class EmployeeService {
 
-    constructor(private emailService: EmailService, private storageService: StorageService<Employee>) { }
+    constructor(private storageService: StorageService<Employee>) { }
 
     /**
      * Creates a new employee. Sends a welcome email to the newly created employee.
@@ -19,7 +19,6 @@ export class EmployeeService {
         const employee = new Employee(employeeDto.name, employeeDto.jobTitle, employeeDto.department);
 
         this.storageService.add(employee);
-        this.emailService.sendWelcomeEmail(employee);
 
         return employee;
     }
@@ -48,18 +47,20 @@ export class EmployeeService {
     /**
      * Deletes an employee.
      * @param id - The ID of the employee to delete.
-     * @returns True if the employee was successfully deleted, false otherwise.
+     * @returns Deleted employee if the it was successfully deleted, null otherwise.
      */
-    delete(id: string): boolean {
+    delete(id: string): Employee {
         const employee = this.storageService.get(id);
         if (employee === null) {
-            return false;
+            return null;
         }
 
-        this.emailService.sendFiringEmail(employee);
-
         const isDeleted = this.storageService.delete(id);
-        return isDeleted;
+        if (isDeleted === false) {
+            return null;
+        }
+
+        return employee;
     }
 
     /**
@@ -67,7 +68,7 @@ export class EmployeeService {
      * @param id - The ID of the employee to retrieve.
      * @returns The retrieved employee, or null if not found.
      */
-    get(id: string): Employee | null {
+    get(id: string): Employee {
         const employee = this.storageService.get(id);
         return employee;
     }
