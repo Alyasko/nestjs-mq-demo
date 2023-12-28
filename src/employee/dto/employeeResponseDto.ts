@@ -1,5 +1,5 @@
 
-export interface EmployeeResponse {
+export interface EmployeeResponseDto {
     id: string;
     name: string;
     jobTitle: string;

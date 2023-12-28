@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Employee } from './model/employee';
 import { CreateEmployeeDto } from './dto/createEmployeeDto';
 import { UpdateEmployeeDto } from "./dto/updateEmployeeDto";
-import { EmailService } from '../email/email.service';
 import { StorageService } from '../storage/storage.service';
 
 @Injectable()

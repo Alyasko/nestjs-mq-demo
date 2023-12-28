@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from './common/httpExceptionFilter';
 
 import "./common/globalConfigService";
 import { ValidationPipe } from '@nestjs/common';
+import { apiConfig } from './common/globalConfigService';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -24,6 +25,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(process.env.API_PORT || 3000);
+  await app.listen(apiConfig.apiPort);
 }
 bootstrap();
